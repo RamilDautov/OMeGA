@@ -47,8 +47,14 @@ if(${PROJECT_NAME_UPPER}_INSTALL_DEPENDENCIES)
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_DIR}/main.cpp)
+target_compile_definitions(${PROJECT_NAME}
+	PRIVATE
+		SDL_MAIN_HANDLED
+)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${SDL2_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC  ${SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME
