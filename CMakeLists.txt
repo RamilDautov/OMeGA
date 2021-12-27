@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-project(OMeGA VERSION 0.0.1)
+project(OMeGA VERSION 0.1.0)
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
@@ -46,15 +46,14 @@ if(${PROJECT_NAME_UPPER}_INSTALL_DEPENDENCIES)
 	install(FILES ${DLLS} DESTINATION bin COMPONENT app)
 endif()
 
-add_executable(${PROJECT_NAME} ${SOURCE_DIR}/main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCE_DIR}/main.cpp ${SOURCE_DIR}/scale.cpp ${SOURCE_DIR}/speaker.cpp)
 target_compile_definitions(${PROJECT_NAME}
 	PRIVATE
 		SDL_MAIN_HANDLED
 )
-
-include_directories(${SDL2_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PUBLIC  ${SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES})
+include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC  ${SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt)
 
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME
