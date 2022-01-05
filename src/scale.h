@@ -5,7 +5,7 @@
 #include <array>
 #include <SDL2/SDL.h>
 
-enum ScaleType
+enum class ScaleType
 {
 	MAJOR,
 	MINOR,
@@ -21,6 +21,7 @@ class Scale
 {
 public:
 	using scale_t = std::array<float, 14>;
+	using scheme_t = std::array<int, 14>;
 
 	Scale(ScaleType scaleType, std::string Key) : m_scaleType(scaleType), m_key(Key) {};
 
@@ -33,7 +34,6 @@ private:
 
 	// two octaves -> 14 notes
 	scale_t m_scale;
-	std::array<int, 14> m_scheme;
+	scheme_t m_scheme;
 };
 #endif // !OMEGA_SCALE
-

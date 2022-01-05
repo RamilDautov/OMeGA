@@ -34,50 +34,50 @@ void Scale::setScheme(ScaleType scaleType)
 {
 	switch(m_scaleType)
 	{
-		case MAJOR:
+	case ScaleType::MAJOR:
 		{
 			// major formula: {whole, whole, half, whole, whole, whole, half}
 			// this pattern repeated 2 times because we work with 2 octaves
 			m_scheme = { 0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23 };
 		}
 		break;
-		case MINOR:
+		case ScaleType::MINOR:
 		{
 			// minor formula: {whole, half, whole, whole, half, whole, whole}
 			m_scheme = { 0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22 };
 		}
 		break;
-		case DORIAN:
+		case ScaleType::DORIAN:
 		{
 			// dorian formula: {whole, half, whole, whole, whole, half, whole}
 			m_scheme = { 0, 2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 22 };
 		}
 		break;
-		case PHRYGIAN:
+		case ScaleType::PHRYGIAN:
 		{
 			// phrygian formula: {half, whole, whole, whole, half, whole, whole}
 			m_scheme = { 0, 1, 3, 5, 7, 8, 10, 12, 13, 15, 17, 19, 20, 22 };
 		}
 		break;
-		case LYDIAN:
+		case ScaleType::LYDIAN:
 		{
 			// lydian formula: {whole, whole, whole, half, whole, whole, half}
 			m_scheme = { 0, 2, 4, 6, 7, 9, 10, 11, 13, 15, 17, 18, 20, 22 };
 		}
 		break;
-		case MIXOLYDIAN:
+		case ScaleType::MIXOLYDIAN:
 		{
 			// mixolydian formula: {whole, whole, half, whole, whole, half, whole,}
 			m_scheme = { 0, 2, 4, 5, 7, 9, 10, 12, 14, 16, 17, 19, 21, 22 };
 		}
 		break;
-		case MAJOR_BLUES:
+		case ScaleType::MAJOR_BLUES:
 		{
 			// major blues formula: {whole, half, half, 3*half, whole, 3*half}
 			m_scheme = { 0, 2, 3, 4, 7, 9, 12, 14, 15, 16, 19, 21, 24, 26 };
 		}
 		break;
-		case MINOR_BLUES:
+		case ScaleType::MINOR_BLUES:
 		{
 			// minor blues formula: {3*half, whole, half, half, 3*half, whole}
 			m_scheme = { 0, 3, 5, 6, 7, 10, 12, 15, 17, 18, 19, 22, 24, 27 };

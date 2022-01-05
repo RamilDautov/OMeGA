@@ -46,14 +46,22 @@ if(${PROJECT_NAME_UPPER}_INSTALL_DEPENDENCIES)
 	install(FILES ${DLLS} DESTINATION bin COMPONENT app)
 endif()
 
-add_executable(${PROJECT_NAME} ${SOURCE_DIR}/main.cpp ${SOURCE_DIR}/scale.cpp ${SOURCE_DIR}/speaker.cpp)
+add_executable(${PROJECT_NAME} 
+								${SOURCE_DIR}/main.cpp
+								${SOURCE_DIR}/scale.cpp
+								${SOURCE_DIR}/speaker.cpp
+								${SOURCE_DIR}/midi.cpp
+								${SOURCE_DIR}/utility/logger.cpp)
+
 target_compile_definitions(${PROJECT_NAME}
 	PRIVATE
 		SDL_MAIN_HANDLED
 )
 include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC  ${SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt spdlog::spdlog)
+
+configure_file(${SOURCE_DIR}/version.h.in	 ${SOURCE_DIR}/version.h)
 
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME
