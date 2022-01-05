@@ -61,7 +61,7 @@ include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC  ${SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt spdlog::spdlog)
 
-configure_file(${SOURCE_DIR}/version.h.in	 ${SOURCE_DIR}/version.h)
+configure_file(${SOURCE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME
