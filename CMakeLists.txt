@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-project(OMeGA VERSION 0.1.0)
+project(OMeGA VERSION 0.2.0)
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
@@ -51,7 +51,8 @@ add_executable(${PROJECT_NAME}
 								${SOURCE_DIR}/scale.cpp
 								${SOURCE_DIR}/speaker.cpp
 								${SOURCE_DIR}/midi.cpp
-								${SOURCE_DIR}/utility/logger.cpp)
+								${SOURCE_DIR}/utility/logger.cpp
+								${SOURCE_DIR}/algorithm/genetic.cpp)
 
 target_compile_definitions(${PROJECT_NAME}
 	PRIVATE
