@@ -150,18 +150,44 @@ Population Genetic::sortPopulation(Population population, FitnessFunc fitnessFun
     if (wp.size() != result.size())
         throw std::runtime_error("Genetic::sortPopulation error: size discrepancy");
 
-    int i = 0;
-
     if (reversed)
     {
         for (auto it = wp.rbegin(); it != wp.rend(); ++it)
-            result[i++] = it->second;
+            result.push_back(it->second);
     }
     else
     {
         for (auto it = wp.begin(); it != wp.end(); ++it)
-            result[i++] = it->second;
+            result.push_back(it->second);
     }
 
     return result;
+}
+
+Population Genetic::runEvolution(FitnessFunc fitnessFunc, uint32_t fitnessLimit, uint32_t generationLimit)
+{
+    Population nextGeneration;
+
+    Population unsortedPopulation = generatePopulation();
+    Population sortedPopulation = sortPopulation(unsortedPopulation, fitnessFunc);
+
+    nextGeneration.push_back(sortedPopulation[0]);
+    nextGeneration.push_back(sortedPopulation[1]);
+
+    for (size_t i = 0; i < static_cast<size_t>((sortedPopulation.size() / 2) - 1); ++i)
+    {
+        auto parents = selectionPair(sortedPopulation, fitnessFunc);
+
+        Genome offspringA, offspringB;
+
+        std::tie(offspringA, offspringB) = singlePointCrossover(std::get<0>(parents), std::get<1>(parents));
+
+        mutation(offspringA);
+        mutation(offspringB);
+
+        nextGeneration.push_back(offspringA);
+        nextGeneration.push_back(offspringB);
+    }
+
+    return nextGeneration;
 }
