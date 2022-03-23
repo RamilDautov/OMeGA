@@ -32,7 +32,7 @@ private:
 	ScaleType m_scaleType;
 	std::string m_key;
 
-	// two octaves -> 14 notes
+	// two octaves -> 14 notes + 2 --> 0000 - pause, 1111 - continue previous note
 	scale_t m_scale;
 	scheme_t m_scheme;
 };

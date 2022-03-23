@@ -5,14 +5,18 @@
 
 #include <fstream>
 #include <vector>
+#include "algorithm/genetic.h"
+#include "scale.h"
 
 class MidiEncoder
 {
 public:
-	
+	MidiEncoder(Scale scale) : m_scale(scale) {};
 
+	void encodeGenomeToMidi(const Genetic::Genome& genome, const std::string& path);
 
 private:
+	Scale m_scale;
 	std::vector<unsigned char> midiInfo;
 
 	unsigned char header[22]{0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06,
