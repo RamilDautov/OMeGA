@@ -27,6 +27,7 @@ set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "app")
 option(${PROJECT_NAME_UPPER}_INSTALL_DEPENDENCIES "Install required libraries in package" ON)
 
 find_package(SDL2 REQUIRED)
+find_package(SDL2_mixer	REQUIRED)
 
 find_package(Threads	REQUIRED)
 find_package(fmt	REQUIRED)
@@ -60,7 +61,7 @@ target_compile_definitions(${PROJECT_NAME}
 )
 include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC  ${SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt spdlog::spdlog)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt spdlog::spdlog SDL2::mixer)
 
 configure_file(${SOURCE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 

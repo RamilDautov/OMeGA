@@ -20,12 +20,13 @@ enum class ScaleType
 class Scale
 {
 public:
-	using scale_t = std::array<float, 14>;
+	using scale_t = std::array<unsigned char, 14>;
 	using scheme_t = std::array<int, 14>;
 
-	Scale(ScaleType scaleType, std::string Key) : m_scaleType(scaleType), m_key(Key) {};
+	Scale(ScaleType scaleType, const std::string& Key);
 
-	scale_t getScale() { return m_scale; };
+	scale_t getScale() const { return m_scale; };
+	scheme_t getScheme() const { return m_scheme; };
 	void setScheme(ScaleType scaleType);
 	void constructScale();
 private:
