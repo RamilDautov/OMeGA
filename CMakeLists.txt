@@ -99,6 +99,12 @@ install(TARGETS ${PROJECT_NAME}
 		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 )
 
+# install library into lib directory
+install(TARGETS ${PROJECT_NAME}_lib
+	ARCHIVE
+		DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib
+)
+
 include(CPackConfig)
 
 set(CPACK_GENERATOR ZIP)
