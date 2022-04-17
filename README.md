@@ -1,2 +1,2 @@
-# OMeGA
-Generate melodies using genetic algorithm
+# OMeGA-lib
+Library to generate melodies using genetic algorithm
