@@ -3,7 +3,6 @@
 
 #include <string>
 #include <array>
-#include <SDL2/SDL.h>
 
 enum class ScaleType
 {
