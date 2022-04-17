@@ -7,7 +7,7 @@
 #include <tuple>
 #include <functional>
 
-constexpr uint16_t GENOME_LENGTH = 256;
+constexpr uint16_t GENOME_LENGTH = 128;
 constexpr uint8_t GENOMES_IN_POPULATION = 6;
 
 namespace GeneticAlgorithm

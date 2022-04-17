@@ -21,6 +21,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
 set(THIRD_PARTY_DIR_NAME "third_party")
 set(${PROJECT_NAME_UPPER}_LIB_PATH ${CMAKE_CURRENT_LIST_DIR}/${THIRD_PARTY_DIR_NAME})
 set(SOURCE_DIR		${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(INCLUDE_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(RESOURCES_DIR	${CMAKE_CURRENT_SOURCE_DIR}/resources)
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "app")
 
@@ -47,6 +48,17 @@ if(${PROJECT_NAME_UPPER}_INSTALL_DEPENDENCIES)
 	install(FILES ${DLLS} DESTINATION bin COMPONENT app)
 endif()
 
+# logger
+
+set(TARGET_NAME ${PROJECT_NAME}-logger)
+add_library(${TARGET_NAME} INTERFACE)
+target_compile_definitions(${TARGET_NAME} INTERFACE SPDLOG_FMT_EXTERNAL)
+target_link_libraries(${TARGET_NAME} INTERFACE fmt::fmt spdlog::spdlog)
+
+add_library(Omega::logger ALIAS ${TARGET_NAME})
+
+#common
+
 add_executable(${PROJECT_NAME} 
 								${SOURCE_DIR}/main.cpp
 								${SOURCE_DIR}/scale.cpp
@@ -60,10 +72,27 @@ target_compile_definitions(${PROJECT_NAME}
 		SDL_MAIN_HANDLED
 )
 include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PUBLIC  ${SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC  ${INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt spdlog::spdlog SDL2::mixer)
 
-configure_file(${SOURCE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+#configure_file(${SOURCE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+configure_file(${INCLUDE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+
+# library
+add_library(${PROJECT_NAME}_lib  STATIC
+								${SOURCE_DIR}/scale.cpp
+								${SOURCE_DIR}/speaker.cpp
+								${SOURCE_DIR}/midi.cpp
+								#${SOURCE_DIR}/utility/logger.cpp
+								${SOURCE_DIR}/algorithm/genetic.cpp
+)
+target_compile_definitions(${PROJECT_NAME}_lib
+	PRIVATE
+		SDL_MAIN_HANDLED
+)
+include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME}_lib PUBLIC  ${INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME}_lib PRIVATE Omega::logger SDL2::Core SDL2::mixer)
 
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME

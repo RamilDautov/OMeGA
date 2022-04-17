@@ -1,4 +1,4 @@
-#include "algorithm/genetic.h"
+#include "genetic.h"
 #include <spdlog/spdlog.h>
 #include <random>
 #include <stdexcept>
