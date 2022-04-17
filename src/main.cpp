@@ -24,7 +24,6 @@ int main() {
 #endif
 
     
-
     auto sinks = setupLogger("../logs/log.txt");
 
     spdlog::info("App version: {}", app::version);
