@@ -1,0 +1,12 @@
+#ifndef __APP_VERSION_H__
+#define __APP_VERSION_H__
+
+namespace app
+{
+	constexpr auto version = "@PROJECT_VERSION@";
+	constexpr int version_major = @PROJECT_VERSION_MAJOR@;
+	constexpr int version_minor = @PROJECT_VERSION_MINOR@;
+	constexpr int version_patch = @PROJECT_VERSION_PATCH@;
+}
+
+#endif //__APP_VERSION_H__

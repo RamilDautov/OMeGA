@@ -4,7 +4,6 @@
 launch.vs.json
 CMakeSettings.json
 build*
-third_party*/
 .vscode/
 .cache/
 .ccls-cache/
