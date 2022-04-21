@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-project(OMeGA VERSION 0.2.0)
+project(OMeGA VERSION 0.3.2)
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
@@ -58,31 +58,30 @@ add_library(Omega::logger ALIAS ${TARGET_NAME})
 
 #common
 
-add_executable(${PROJECT_NAME} 
-								${SOURCE_DIR}/main.cpp
-								${SOURCE_DIR}/scale.cpp
-								${SOURCE_DIR}/speaker.cpp
-								${SOURCE_DIR}/midi.cpp
-								${SOURCE_DIR}/utility/logger.cpp
-								${SOURCE_DIR}/algorithm/genetic.cpp)
-
-target_compile_definitions(${PROJECT_NAME}
-	PRIVATE
-		SDL_MAIN_HANDLED
-)
-include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
-target_include_directories(${PROJECT_NAME} PUBLIC  ${INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt spdlog::spdlog SDL2::mixer)
-
-#configure_file(${SOURCE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
-configure_file(${INCLUDE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+#add_executable(${PROJECT_NAME} 
+#								${SOURCE_DIR}/main.cpp
+#								${SOURCE_DIR}/scale.cpp
+#								${SOURCE_DIR}/speaker.cpp
+#								${SOURCE_DIR}/midi.cpp
+#								${SOURCE_DIR}/utility/logger.cpp
+#								${SOURCE_DIR}/algorithm/genetic.cpp)
+#
+#target_compile_definitions(${PROJECT_NAME}
+#	PRIVATE
+#		SDL_MAIN_HANDLED
+#)
+#include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
+#target_include_directories(${PROJECT_NAME} PUBLIC  ${INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} fmt::fmt spdlog::spdlog SDL2::mixer)
+#
+#configure_file(${INCLUDE_DIR}/version.h.in	 ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 # library
 add_library(${PROJECT_NAME}_lib  STATIC
 								${SOURCE_DIR}/scale.cpp
 								${SOURCE_DIR}/speaker.cpp
 								${SOURCE_DIR}/midi.cpp
-								#${SOURCE_DIR}/utility/logger.cpp
+								${SOURCE_DIR}/utility/logger.cpp
 								${SOURCE_DIR}/algorithm/genetic.cpp
 )
 target_compile_definitions(${PROJECT_NAME}_lib
@@ -93,11 +92,11 @@ include_directories(${SDL2_INCLUDE_DIR} ${FMT_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME}_lib PUBLIC  ${INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(${PROJECT_NAME}_lib PRIVATE Omega::logger SDL2::Core SDL2::mixer)
 
-install(TARGETS ${PROJECT_NAME}
-	RUNTIME
-		DESTINATION bin COMPONENT app
-		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-)
+#install(TARGETS ${PROJECT_NAME}
+#	RUNTIME
+#		DESTINATION bin COMPONENT app
+#		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+#)
 
 # install library into lib directory
 install(TARGETS ${PROJECT_NAME}_lib
@@ -105,9 +104,9 @@ install(TARGETS ${PROJECT_NAME}_lib
 		DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )
 
-include(CPackConfig)
-
-set(CPACK_GENERATOR ZIP)
-set(CPACK_COMPONENTS_ALL app)
-
-add_cpack_target(${PROJECT_NAME} ${PROJECT_VERSION})
+#include(CPackConfig)
+#
+#set(CPACK_GENERATOR ZIP)
+#set(CPACK_COMPONENTS_ALL app)
+#
+#add_cpack_target(${PROJECT_NAME} ${PROJECT_VERSION})
