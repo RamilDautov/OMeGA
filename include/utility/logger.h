@@ -5,8 +5,8 @@
 
 namespace utility
 {
-	std::shared_ptr<spdlog::logger> setup_logger(const std::vector<spdlog::sink_ptr>&);
-	void shutdown_logger();
+	std::shared_ptr<spdlog::logger> setupLogger(const std::vector<spdlog::sink_ptr>&);
+	void shutdownLogger();
 }
 
 

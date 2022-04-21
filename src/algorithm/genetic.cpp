@@ -2,11 +2,15 @@
 #include <spdlog/spdlog.h>
 #include <random>
 #include <stdexcept>
+#include <exception>
 #include <algorithm>
 #include <iterator>
 #include <thread>
 
 using namespace GeneticAlgorithm;
+
+static WeightedPopulation g_weightedPopulation{};
+static uint16_t g_maxWeight;
 
 Genome Genetic::generateGenome(size_t genomeLength)
 {
@@ -55,9 +59,9 @@ std::tuple<Genome, Genome> Genetic::singlePointCrossover(Genome first, Genome se
     Genome a;
     Genome b;
 
-    std::merge(first.begin(), first.begin() + p, second.begin()+p+1, second.end(), std::back_inserter(a));
-    std::merge(second.begin(), second.begin() + p, first.begin()+p+1, first.end(), std::back_inserter(b));
-    spdlog::info("Crossover passed");
+    std::merge(first.begin(), first.begin() + p, second.begin()+p, second.end(), std::back_inserter(a));
+    std::merge(second.begin(), second.begin() + p, first.begin()+p, first.end(), std::back_inserter(b));
+    spdlog::info("Crossover passed: a = {}, b = {}", a.size(), b.size());
     return std::make_tuple( a, b );
 }
 
@@ -78,31 +82,24 @@ void Genetic::mutation(Genome& genome, size_t num, float probability)
         if (p < probability)
             genome[idx] = static_cast<bool>(genome[idx]) ^ 1;
     }
-    spdlog::info("Mutation passed");
+	spdlog::info("Mutation passed");
 }
 
-int Genetic::populationFitness(Population population, FitnessFunc fitnessFunc)
+int Genetic::populationFitness()
 {
     int sum = 0;
 
-    for (size_t i = 0; i < population.size(); ++i)
-    {
-        auto genome = population[i];
-        sum += fitnessFunc(genome);
-    }
+    for(const auto& [weight, _] : g_weightedPopulation)
+		sum += weight;
 
     return sum;
 }
 
-std::tuple<Genome, Genome> Genetic::selectionPair(Population population, FitnessFunc fitnessFunc)
+std::tuple<Genome, Genome> Genetic::selectionPair(const Population& population)
 {
     std::array<Genome, 2> result{};
 
-    int sumWeights = 0;
-
-    auto weightedPopulation = generateWeightedDistribution(population, fitnessFunc);
-    for (const auto& [weight, _] : weightedPopulation)
-        sumWeights += weight;
+    int sumWeights = populationFitness();
 
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
@@ -111,11 +108,11 @@ std::tuple<Genome, Genome> Genetic::selectionPair(Population population, Fitness
     for (size_t i = 0; i < 2; ++i)
     {
         int rnd = randInt(generator);
-        for (const auto& [weight, gene] : weightedPopulation)
+        for (const auto& [geneIdx, weight] : g_weightedPopulation)
         {
             if (rnd < weight)
             {
-                result[i] = gene;
+				result[i] = population[geneIdx];
                 break;
             }
             rnd -= weight;
@@ -125,25 +122,26 @@ std::tuple<Genome, Genome> Genetic::selectionPair(Population population, Fitness
     return std::make_tuple(result[0], result[1]);
 }
 
-WeightedPopulation Genetic::generateWeightedDistribution(Population population, FitnessFunc fitnessFunc)
+void Genetic::generateWeightedDistribution(const Population& population, FitnessFunc fitnessFunc)
 {
-    WeightedPopulation wp{};
-
     for (size_t i = 0; i < population.size(); ++i)
     {
         auto gene = population[i];
         int weight = fitnessFunc(gene);
-        wp[weight] = gene;
+        g_weightedPopulation[i] = std::make_pair(i, weight);
     }
-    spdlog::info("Weighted population generated");
-    return wp;
+
+    // sorted in ascending order
+	std::sort(g_weightedPopulation.begin(), g_weightedPopulation.end(), [&](auto& a, auto& b) { return a.second < b.second; });
+
+	spdlog::info("Weighted population generated.");
 }
 
-Population Genetic::sortPopulation(Population population, FitnessFunc fitnessFunc, bool reversed)
+Population Genetic::sortPopulation(const Population& population, FitnessFunc fitnessFunc, bool reversed)
 {
     Population result{};
 
-    WeightedPopulation wp = generateWeightedDistribution(population, fitnessFunc);
+    generateWeightedDistribution(population, fitnessFunc);
 
     // size should be equal
     /*if (wp.size() != result.size())
@@ -151,53 +149,70 @@ Population Genetic::sortPopulation(Population population, FitnessFunc fitnessFun
 
     if (reversed)
     {
-        for (auto it = wp.rbegin(); it != wp.rend(); ++it)
-            result.push_back(it->second);
+        // descending order
+		for(auto it = g_weightedPopulation.rbegin(); it != g_weightedPopulation.rend(); ++it)
+            result.push_back(population[it->first]);
     }
     else
     {
-        for (auto it = wp.begin(); it != wp.end(); ++it)
-            result.push_back(it->second);
+		// ascending order
+		for(auto it = g_weightedPopulation.begin(); it != g_weightedPopulation.end(); ++it)
+			result.push_back(population[it->first]);
     }
-    spdlog::info("Population sorted");
+
+	g_maxWeight = g_weightedPopulation.rbegin()->second;
+	spdlog::info("Population sorted. Max weight: {}", g_maxWeight);
+
     return result;
 }
 
-Population Genetic::runEvolution(FitnessFunc fitnessFunc, uint32_t fitnessLimit, uint32_t generationLimit)
+uint16_t Genetic::getMaxWeight()
 {
-    spdlog::info("!!! run evolution 1");
-    Population population = generatePopulation();
-
-    for (size_t genNum = 0; genNum < generationLimit; ++genNum)
-    {
-        Population nextGeneration;
-        spdlog::info("!!! run evolution");
-        Population sortedPopulation = sortPopulation(population, fitnessFunc);
-
-        if (fitnessFunc(population[0]) >= fitnessLimit)
-            break;
-
-        nextGeneration.push_back(sortedPopulation[0]);
-        nextGeneration.push_back(sortedPopulation[1]);
-
-        for (size_t i = 0; i < static_cast<size_t>((sortedPopulation.size() / 2) - 1); ++i)
-        {
-            auto parents = selectionPair(sortedPopulation, fitnessFunc);
-
-            Genome offspringA, offspringB;
-
-            std::tie(offspringA, offspringB) = singlePointCrossover(std::get<0>(parents), std::get<1>(parents));
-
-            mutation(offspringA);
-            mutation(offspringB);
-
-            nextGeneration.push_back(offspringA);
-            nextGeneration.push_back(offspringB);
-        }
-        population = nextGeneration;
-    }
-    spdlog::info("Evolution is finished");
-
-    
-    return population;
+	return g_maxWeight;
 }
+
+//Population Genetic::runEvolution(FitnessFunc fitnessFunc, uint32_t fitnessLimit, uint32_t generationLimit)
+//{
+//    Population population = generatePopulation();
+//
+//    for (size_t genNum = 0; genNum < generationLimit; ++genNum)
+//    {
+//        Population nextGeneration;
+//        Population sortedPopulation = sortPopulation(population, fitnessFunc);
+//
+//        if(g_maxWeight >= fitnessLimit)
+//            break;
+//
+//        nextGeneration.push_back(sortedPopulation[0]);
+//        nextGeneration.push_back(sortedPopulation[1]);
+//
+//        for (size_t i = 0; i < static_cast<size_t>((sortedPopulation.size() / 2) - 1); ++i)
+//        {
+//            auto parents = selectionPair(sortedPopulation);
+//
+//            Genome offspringA, offspringB;
+//
+//            try
+//			{
+//				std::tie(offspringA, offspringB) = singlePointCrossover(std::get<0>(parents), std::get<1>(parents));
+//
+//                mutation(offspringA);
+//				mutation(offspringB);
+//
+//				nextGeneration.push_back(offspringA);
+//				nextGeneration.push_back(offspringB);
+//			}
+//			catch(std::exception& e)
+//			{
+//				spdlog::error("Exception: {}", e.what());
+//            }
+//
+//            
+//        }
+//        population = nextGeneration;
+//    }
+//    spdlog::info("Evolution is finished");
+//
+//    
+//    return population;
+//}
