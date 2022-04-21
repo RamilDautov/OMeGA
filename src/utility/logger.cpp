@@ -11,7 +11,7 @@
 #include <X11/Xlib.h>
 #endif
 
-std::shared_ptr<spdlog::logger> utility::setup_logger(const std::vector<spdlog::sink_ptr>& sinks)
+std::shared_ptr<spdlog::logger> utility::setupLogger(const std::vector<spdlog::sink_ptr>& sinks)
 {
 	constexpr auto logger_name = "core";
 	auto logger = spdlog::get(logger_name);
@@ -33,7 +33,7 @@ std::shared_ptr<spdlog::logger> utility::setup_logger(const std::vector<spdlog::
 	return logger;
 }
 
-void utility::shutdown_logger()
+void utility::shutdownLogger()
 {
 	spdlog::shutdown();
 }

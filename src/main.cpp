@@ -5,7 +5,7 @@
 #include "algorithm/genetic.h"
 #include <iostream>
 #include <SDL2/SDL.h>
-#include "SDL2/SDL_mixer.h"
+#include <SDL2/SDL_mixer.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -28,10 +28,6 @@ int main() {
 
     spdlog::info("App version: {}", app::version);
 
-    SDL_Init(SDL_INIT_AUDIO);
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
-    Mix_VolumeMusic(100);
-
     // the representation of our audio device in SDL:
     std::shared_ptr<Speaker> speaker = std::make_shared<Speaker>();
 
@@ -39,24 +35,25 @@ int main() {
     speaker->openAudioDevice();
 
     // play some sound
-    //speaker->playSomething();
+	speaker->playMidiFile("untitled.mid");
 
     //Scale scale(ScaleType::MAJOR, "C");
-    Scale scale(ScaleType::MINOR_BLUES, "C");
-    MidiEncoder midiEncoder(scale, 130);
+    //Scale scale(ScaleType::MINOR_BLUES, "C");
+    //MidiEncoder midiEncoder(scale, 130);
 
-    auto pop = Genetic::runEvolution(fitnessFunc, 5, 10);
+    //auto pop = Genetic::runEvolution(fitnessFunc, 5, 10);
 
-    midiEncoder.encodeGenomeToMidi(pop[0], "untitled.mid");
+    //midiEncoder.encodeGenomeToMidi(pop[0], "untitled.mid");
 
-    spdlog::info("Midi encoded to file");
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    //spdlog::info("Midi encoded to file");
+    //std::this_thread::sleep_for(std::chrono::seconds(3));
     //Load song
-    std::string midiFile = "untitled.mid";
-    Mix_Music* song = Mix_LoadMUS(midiFile.c_str());
+    //std::string midiFile = "untitled.mid";
+    //Mix_Music* song = Mix_LoadMUS(midiFile.c_str());
 
     //Play song
-    Mix_PlayMusic(song, 1);
+    //Mix_PlayMusic(song, 0);
+
 
     std::cout << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -72,7 +69,7 @@ std::vector<spdlog::sink_ptr> setupLogger(std::string path)
     sinks.push_back(std::make_shared<spdlog::sinks::stderr_sink_mt>());
     sinks.push_back(std::make_shared<spdlog::sinks::daily_file_sink_mt>(path, 23, 59));
 
-    auto logger = utility::setup_logger(sinks);
+    auto logger = utility::setupLogger(sinks);
     auto lvl = spdlog::level::level_enum::debug;
     spdlog::set_level(lvl);
 
